@@ -230,6 +230,7 @@ ClientBin/
 *.publishsettings
 orleans.codegen.cs
 appsettings.json
+appsettings.Development.json
 libman.json
 
 # Including strong name files can present a security risk
