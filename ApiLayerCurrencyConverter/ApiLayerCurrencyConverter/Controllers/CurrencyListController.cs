@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ApiLayerCurrencyConverter.DataTransferObjects;
 using Flurl.Http;
+using ApiLayerCurrencyConverter.DataTransferObjects;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,12 +13,14 @@ namespace ApiLayerCurrencyConverter.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CurrencyConversionController : ControllerBase
+    public class CurrencyListController : ControllerBase
     {
-        // GET: api/<CurrencyController>
+        // GET: api/<CurrencyListController>
         [HttpGet]
-        public float ConvertCurrency(string currencyFrom, string currencyTo, string amount)
+        public Dictionary<string,string> ReturnListOfCurrencies()
         {
+            Dictionary<string, string> result = new Dictionary<string, string>();
+
             var builder = new ConfigurationBuilder();
             builder.AddJsonFile("appsettings.json", optional: false);
             var configuration = builder.Build();
@@ -26,27 +28,23 @@ namespace ApiLayerCurrencyConverter.Controllers
             var apiKey = configuration.GetValue<string>("ApiKeys:RapidApiKey");
             var ApiHostCurrency = configuration.GetValue<string>("ApiKeys:RapidApiHostCurrencyConverter");
 
-            var apiUri = $"https://currency-converter5.p.rapidapi.com/currency/convert?format=json&from={currencyFrom.Trim()}&to={currencyTo.Trim()}&amount={amount.Trim()}";
-                  
+            string apiUri = "https://currency-converter5.p.rapidapi.com/currency/list";
+
             var apiTask = apiUri.WithHeaders(new
             {
                 X_RapidAPI_Host = ApiHostCurrency,
                 X_RapidAPI_Key = apiKey
-            }).GetJsonAsync<ApiResult>();
+            }).GetJsonAsync<CurrencyListApiResult>();
             apiTask.Wait();
 
-            // Currency ratesResult = apiTask.Result.rates;
-            Dictionary<string, Currency> ratesResult = apiTask.Result.rates;
-            float result = float.Parse(ratesResult[$"{currencyTo}"].rate_for_amount);
+            foreach (var item in apiTask.Result.currencies)
+            {
+                result.Add(item.Key, item.Value);
+            }
 
-            if (apiTask.Result.status.Trim().ToLower() == "success")
-            {
-                return result;
-            }
-            else
-            {
-                return -1;
-            }
+            return result;
         }
+
+      
     }
 }
