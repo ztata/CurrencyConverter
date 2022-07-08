@@ -34,9 +34,24 @@ export class AppComponent {
     });  */   
     this.service.ReturnCurrencyList().subscribe(data =>{
       console.log(data)
-      this.currencyArray = data
+      this.currencyArray = data.sort((a,b) => a.name.localeCompare(b.name))
     })
+
+  
     
+  }
+
+  compare(a: { symbol: string; }, b: { symbol: string; }){
+    const bandA = a.symbol.toUpperCase();
+    const bandB = b.symbol.toUpperCase();
+
+  let comparison = 0;
+  if (bandA > bandB) {
+    comparison = 1;
+  } else if (bandA < bandB) {
+    comparison = -1;
+  }
+  return comparison;
   }
 
   LogCurrency(){

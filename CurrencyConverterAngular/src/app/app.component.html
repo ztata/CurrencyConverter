@@ -24,7 +24,7 @@
   <mat-form-field appearance="standard">
     <mat-label>Currency To:</mat-label>
     <mat-select class="form-control" matInput formControlName="currencyTo">
-      <mat-option *ngFor="let currency of currencyArray" value={{currency.symbol}}>{{currency.name}}</mat-option>
+      <mat-option *ngFor="let currency of currencyArray" value={{currency.symbol}}>{{currency.symbol}} : {{currency.name}}</mat-option>
     </mat-select>
   </mat-form-field>
   <button type="submit" class="btn btn-primary">Convert</button>
