@@ -17,10 +17,8 @@ namespace ApiLayerCurrencyConverter.Controllers
     {
         // GET: api/<CurrencyListController>
         [HttpGet]
-        public Dictionary<string,string> ReturnListOfCurrencies()
+        public List<CurrencyListApiResponse> ReturnListOfCurrencies()
         {
-            Dictionary<string, string> result = new Dictionary<string, string>();
-
             var builder = new ConfigurationBuilder();
             builder.AddJsonFile("appsettings.json", optional: false);
             var configuration = builder.Build();
@@ -37,12 +35,19 @@ namespace ApiLayerCurrencyConverter.Controllers
             }).GetJsonAsync<CurrencyListApiResult>();
             apiTask.Wait();
 
+            
+            Dictionary<string, string> result = new Dictionary<string, string>();
             foreach (var item in apiTask.Result.currencies)
             {
                 result.Add(item.Key, item.Value);
             }
 
-            return result;
+
+            List<CurrencyListApiResponse> response = result.Select(p => new CurrencyListApiResponse { Symbol = p.Key, Name = p.Value }).ToList();
+
+           
+
+            return response;
         }
 
       
