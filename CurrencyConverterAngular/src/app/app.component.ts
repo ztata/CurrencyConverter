@@ -1,9 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Testability } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
 import { CurrencyService } from './currency.service';
-import { ICUrrency } from './ICurrency';
 
 @Component({
   selector: 'app-root',
@@ -11,72 +9,42 @@ import { ICUrrency } from './ICurrency';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'CurrencyConverterAngular';
   currencyMap = new Map();
+
   currencyArray: any;
-  testArray: any;
+
   conversionForm = new FormGroup({
     currencyFrom: new FormControl('', [Validators.required]),
     currencyTo: new FormControl('', [Validators.required]),
     amount: new FormControl('', [Validators.required])
   })
+
   convertedValue: any;
-  constructor(private service: CurrencyService, private http: HttpClient){}
 
-  ngOnInit(){
-    /* this.currencyMap = this.service.mockData;
-    this.currencyArray = Array.from(this.currencyMap, ([key, value]) => {
-      return <ICUrrency> 
-      {
-        symbol:key,
-        name:value
-      };
-    });  */   
-    this.service.ReturnCurrencyList().subscribe(data =>{
-      console.log(data)
-      this.currencyArray = data.sort((a,b) => a.name.localeCompare(b.name))
+  currencyFromName: string = "";
+
+  currencyToName: string = "";
+
+  currencyFromCode: string = "";
+
+  currencyToCode: string = "";
+
+
+  constructor(private service: CurrencyService, private http: HttpClient) { }
+
+  ngOnInit() {
+
+    this.service.ReturnCurrencyList().subscribe(data => {
+      this.currencyArray = data.sort((a, b) => a.symbol.localeCompare(b.symbol))
     })
-
-  
-    
   }
 
-  compare(a: { symbol: string; }, b: { symbol: string; }){
-    const bandA = a.symbol.toUpperCase();
-    const bandB = b.symbol.toUpperCase();
-
-  let comparison = 0;
-  if (bandA > bandB) {
-    comparison = 1;
-  } else if (bandA < bandB) {
-    comparison = -1;
+  CalculateConversion() {
+    this.currencyFromName = this.conversionForm.value.currencyFrom.substring(3);
+    this.currencyToName = this.conversionForm.value.currencyTo.substring(3);
+    this.currencyFromCode = this.conversionForm.value.currencyFrom.substring(0, 3);
+    this.currencyToCode = this.conversionForm.value.currencyTo.substring(0, 3);
+    this.service.ConvertCurrency(this.currencyFromCode, this.currencyToCode, this.conversionForm.value.amount.toString()).subscribe(data => this.convertedValue = data);
   }
-  return comparison;
-  }
-
-  LogCurrency(){
-    console.log(this.currencyArray);
-  }
-
-  CalculateConversion(){
-    console.log(this.conversionForm.value)
-    this.service.ConvertCurrency(this.conversionForm.value.currencyFrom, this.conversionForm.value.currencyTo, this.conversionForm.value.amount.toString()).subscribe(data => this.convertedValue = data);
-    console.log(this.convertedValue)
-
-  }
-
-  getCurrencyList(){
-    console.log("called get currency list in app component")
-       
-  this.service.ReturnCurrencyList().subscribe(data =>{
-    console.log(data)
-    this.testArray = data
-  }
-
-  )
-
-  console.log(this.testArray)
-  }
-
 
 }

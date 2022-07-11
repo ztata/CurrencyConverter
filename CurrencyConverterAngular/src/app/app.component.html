@@ -1,41 +1,36 @@
-<p>app component works</p>
+<div class="title">
+  <h1>Global Currency Conversion</h1>
+  <h3>Select two currencies and an amount to convert to begin</h3>
+</div>
 
-<button (click)="LogCurrency()">click to log currencyList</button>
+<div class="formDiv">
+  <form [formGroup]="conversionForm" class="form-inline" (ngSubmit)="CalculateConversion()">
+    <mat-form-field appearance="standard">
+      <mat-label>Currency From:</mat-label>
+      <mat-select class="form-control" matInput formControlName="currencyFrom">
+        <mat-option *ngFor="let currency of currencyArray" [value]="currency.symbol + currency.name">{{currency.symbol}}
+          : {{currency.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-<!-- <ul>
-  <div *ngFor="let currency of currencyArray">
-    <li>{{currency.name}}</li>
-  </div>
-</ul> -->
+    <mat-form-field appearance="standard" class="amountField">
+      <mat-label>Amount</mat-label>
+      <input type="number" placeholder="Enter Value to Convert" class="form-control" matInput formControlName="amount">
+    </mat-form-field>
 
-<form [formGroup]="conversionForm" class="form-inline" (ngSubmit)="CalculateConversion()">
-  <mat-form-field appearance="standard">
-    <mat-label>Currency From:</mat-label>
-    <mat-select class="form-control" matInput formControlName="currencyFrom">
-      <mat-option *ngFor="let currency of currencyArray" value={{currency.symbol}}>{{currency.symbol}} : {{currency.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field appearance="standard">
+      <mat-label>Currency To:</mat-label>
+      <mat-select class="form-control" matInput formControlName="currencyTo">
+        <mat-option *ngFor="let currency of currencyArray" [value]="currency.symbol + currency.name">{{currency.symbol}}
+          :
+          {{currency.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button type="submit" class="btn btn-primary" [disabled]="!conversionForm.valid">Convert</button>
+  </form>
+</div>
 
-  <mat-form-field appearance="standard">
-    <mat-label>Amount</mat-label>
-    <input type="number" placeholder="Enter Value to Convert" class="form-control" matInput formControlName="amount">
-  </mat-form-field>
-
-  <mat-form-field appearance="standard">
-    <mat-label>Currency To:</mat-label>
-    <mat-select class="form-control" matInput formControlName="currencyTo">
-      <mat-option *ngFor="let currency of currencyArray" value={{currency.symbol}}>{{currency.symbol}} : {{currency.name}}</mat-option>
-    </mat-select>
-  </mat-form-field>
-  <button type="submit" class="btn btn-primary">Convert</button>
-</form>
-
-<h1>Converted Value: {{convertedValue | currency}}</h1>
-
-<!-- <button (click)="getCurrencyList()">click to test api</button>
-
-<ul>
-  <div *ngFor="let test of testArray">
-    <li>{{test.name}}</li>
-  </div>
-</ul> -->
+<div *ngIf="convertedValue != null" class="result">
+  <h1> {{conversionForm.value.amount | currency : currencyFromCode : 'symbol' }} {{currencyFromName + "s"}} <strong> =
+    </strong> {{convertedValue | currency : currencyToCode : 'symbol' }} {{currencyToName + "s"}}</h1>
+</div>
