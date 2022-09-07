@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { CurrencyService } from './currency.service';
 
 @Component({
@@ -13,10 +13,10 @@ export class AppComponent {
 
   currencyArray: any;
 
-  conversionForm = new FormGroup({
-    currencyFrom: new FormControl('', [Validators.required]),
-    currencyTo: new FormControl('', [Validators.required]),
-    amount: new FormControl('', [Validators.required])
+  conversionForm = new UntypedFormGroup({
+    currencyFrom: new UntypedFormControl('', [Validators.required]),
+    currencyTo: new UntypedFormControl('', [Validators.required]),
+    amount: new UntypedFormControl('', [Validators.required])
   })
 
   convertedValue: any;
